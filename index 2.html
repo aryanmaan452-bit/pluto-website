@@ -425,6 +425,38 @@
     .scene-stars path{ animation:none !important; }
   }
 
+
+  /* PLUTO miniature journey — no runtime or image dependencies. */
+  .hero{min-height:0;padding:4.5rem 0 2rem;isolation:isolate;display:block}
+  .hero-copy{position:relative;z-index:2;text-align:center;max-width:1000px}
+  .hero .kicker{text-transform:uppercase;letter-spacing:.2em;font-size:.67rem;margin-bottom:1.5rem}
+  .journey-title{font-family:var(--font-display);font-weight:400;font-size:clamp(2.4rem,5.3vw,4.7rem);line-height:1.08;letter-spacing:-.045em;margin:0 auto;max-width:20ch;text-wrap:balance}
+  .journey-title em{font-weight:400;color:var(--rust-bright)}
+  .hero .lede{margin:1.4rem auto;max-width:53ch;font-size:.9rem}
+  .hero-cta{display:inline-flex;align-items:center;gap:2.5rem;padding:.85rem 1.25rem;background:var(--cream);color:var(--void);text-decoration:none;font-size:.8rem;border-radius:3px}
+  .rail-world{position:relative;height:clamp(300px,40vw,540px);margin-top:-2rem;overflow:hidden;z-index:-1;mask-image:linear-gradient(transparent,#000 16%,#000 87%,transparent)}
+  .rail-world>svg{width:100%;height:100%;max-width:none}
+  .scene-caption{position:absolute;left:5%;bottom:18%;color:#f2e7d6;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase}
+  .train{animation:railJourney 28s linear infinite;will-change:transform}
+  @keyframes railJourney{from{transform:translateX(-460px)}to{transform:translateX(1500px)}}
+  .distant-clouds{animation:cloudDrift 28s ease-in-out infinite alternate}
+  .cloud-layer{animation:cloudDrift 20s ease-in-out infinite alternate-reverse}
+  .foreground-clouds{animation:cloudDrift 16s ease-in-out infinite alternate}
+  @keyframes cloudDrift{to{transform:translateX(24px)}}
+  .journey-console{display:flex;justify-content:space-between;align-items:center;gap:2rem;position:relative;margin-top:-1.5rem;z-index:3}
+  .service-picker{width:min(100%,480px);padding:1.2rem 1.5rem;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 15px 40px #0001}
+  .service-picker label{display:block;font-size:.68rem;letter-spacing:.04em;color:var(--dim);margin-bottom:.8rem}
+  .route-controls{display:flex;gap:1rem;align-items:center}
+  .route-controls select{min-width:0;flex:1;color:var(--cream);background:var(--panel);font:500 .85rem var(--font-body);border:0;border-bottom:1px solid var(--line);padding:.5rem 0;cursor:pointer}
+  .route-controls a{font-size:.75rem;white-space:nowrap;text-underline-offset:5px}
+  .service-picker p{font-size:.72rem;color:var(--dim);line-height:1.5;margin:.8rem 0 0}
+  .motion-toggle{color:var(--dim);font:inherit;font-size:.7rem;border:1px solid var(--line);background:var(--panel);padding:.7rem 1rem;border-radius:30px;cursor:pointer}
+  button:focus-visible,select:focus-visible{outline:2px solid var(--rust-bright);outline-offset:4px}
+  .hero.scenery-paused .rail-world *{animation-play-state:paused!important}
+  [data-theme="light"] .rail-world{opacity:.9}
+  @media(max-width:640px){.hero{padding-top:3rem}.hero .kicker{font-size:.57rem}.rail-world{margin-top:0;height:320px}.journey-console{align-items:flex-start;flex-direction:column;gap:1rem}.service-picker{padding:1rem;width:100%}.scene-caption{bottom:20%;font-size:.5rem}.motion-toggle{align-self:flex-end}.journey-title{max-width:19ch}}
+  @media(prefers-reduced-motion:reduce){.rail-world *{animation:none!important}.train{transform:translateX(510px)}.motion-toggle{display:none}}
+
 </style>
 </head>
 <body>
@@ -469,22 +501,48 @@
   </header>
 
   <section class="hero play" id="home">
-    <div class="orbit-stage" aria-hidden="true">
-      <div class="barycenter"></div>
-      <div class="orbit-wrap-pluto"><div class="dot-pluto"></div></div>
-      <div class="orbit-wrap-charon"><div class="dot-charon"></div></div>
+    <div class="hero-copy wrap">
+      <p class="kicker">PLUTO / Independent digital media agency</p>
+      <h1 class="journey-title">A digital media agency built in Baraut, aimed at <em>everywhere else.</em></h1>
+      <p class="lede">Sharp creative, consistent presence, and campaigns built to be noticed. Small town roots. A much wider orbit.</p>
+      <a class="hero-cta" href="#contact">Start a project <span aria-hidden="true">↗</span></a>
     </div>
-
-    <div class="wrap">
-      <p class="kicker reveal-el r1">Digital media agency</p>
-      <h1 class="wordmark reveal-el r2">PLUTO</h1>
-      <p class="tagline reveal-el r3">A digital media agency built in Baraut, aimed at everywhere else.</p>
-      <p class="lede reveal-el r4">In 2006, astronomers voted Pluto off the list of planets. It's still the one most people can name.</p>
+    <div class="rail-world" aria-hidden="true">
+      <svg viewBox="0 0 1440 650" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#233346"/><stop offset=".65" stop-color="#8c7168"/><stop offset="1" stop-color="#c49370"/></linearGradient>
+          <radialGradient id="sun"><stop stop-color="#ffdfab" stop-opacity=".7"/><stop offset="1" stop-color="#ffca91" stop-opacity="0"/></radialGradient>
+          <linearGradient id="cloud" x2=".3" y2="1"><stop stop-color="#ead8c5"/><stop offset=".4" stop-color="#bea99f"/><stop offset="1" stop-color="#6b7481"/></linearGradient>
+          <linearGradient id="bridge" x2="0" y2="1"><stop stop-color="#ac8b77"/><stop offset="1" stop-color="#3c3b43"/></linearGradient>
+          <linearGradient id="car" x2="0" y2="1"><stop stop-color="#e9a06d"/><stop offset=".15" stop-color="#bf603d"/><stop offset="1" stop-color="#6f3028"/></linearGradient>
+          <linearGradient id="roof" x2="0" y2="1"><stop stop-color="#f1d2a9"/><stop offset="1" stop-color="#a28d7d"/></linearGradient>
+          <g id="cloudBank"><path d="M-180 130C-170 88-115 78-80 94C-100 25-20 0 22 38C43-28 140-19 163 45C211 3 274 37 272 89C321 58 375 88 370 128C414 110 451 142 440 169H-180Z" fill="url(#cloud)"/><path d="M-80 94C-63 63-21 60 8 77M163 45C172 72 167 90 151 105M272 89C247 79 220 92 208 110" fill="none" stroke="#f7e5d2" stroke-opacity=".22" stroke-width="5"/></g>
+          <g id="carriage"><path d="M0 0L10-9H111L122 0Z" fill="url(#roof)"/><rect width="122" height="39" rx="5" fill="url(#car)"/><path d="M0 27H122" stroke="#efbe85" stroke-width="2"/><g fill="#ffe2a3"><rect x="13" y="8" width="13" height="14" rx="2"/><rect x="34" y="8" width="13" height="14" rx="2"/><rect x="55" y="8" width="13" height="14" rx="2"/><rect x="76" y="8" width="13" height="14" rx="2"/><rect x="97" y="8" width="13" height="14" rx="2"/></g><path d="M9 39H114" stroke="#292c34" stroke-width="6"/><g fill="#252832" stroke="#998a7d" stroke-width="2"><circle cx="23" cy="42" r="6"/><circle cx="101" cy="42" r="6"/></g></g>
+        </defs>
+        <rect width="1440" height="650" fill="url(#sky)"/>
+        <circle cx="1090" cy="200" r="270" fill="url(#sun)"/>
+        <circle cx="1090" cy="201" r="39" fill="#efd6b0" opacity=".65"/>
+        <g class="distant-clouds" opacity=".55"><use href="#cloudBank" transform="translate(170 240) scale(1.1 .8)"/><use href="#cloudBank" transform="translate(900 240) scale(1.3 .7)"/></g>
+        <path d="M0 490L130 407L250 450L420 335L570 470L720 390L860 465L1030 360L1200 448L1350 358L1440 431V650H0Z" fill="#434d5b" opacity=".6"/>
+        <path d="M0 530L190 462L350 512L530 425L740 522L950 455L1120 510L1340 430L1440 470V650H0Z" fill="#354351"/>
+        <g class="cloud-layer"><use href="#cloudBank" transform="translate(20 390) scale(1.2 .9)"/><use href="#cloudBank" transform="translate(980 395) scale(1.4 1)"/></g>
+        <g class="viaduct">
+          <path d="M-100 426H1540V650H-100Z M50 650V535A66 66 0 0 1 182 535V650Z M258 650V535A66 66 0 0 1 390 535V650Z M466 650V535A66 66 0 0 1 598 535V650Z M674 650V535A66 66 0 0 1 806 535V650Z M882 650V535A66 66 0 0 1 1014 535V650Z M1090 650V535A66 66 0 0 1 1222 535V650Z M1298 650V535A66 66 0 0 1 1430 535V650Z" fill="url(#bridge)" fill-rule="evenodd"/>
+          <path d="M-100 426H1540" stroke="#dbb48a" stroke-width="8"/><path d="M-100 440H1540" stroke="#2b3039" stroke-width="8"/><path d="M0 417H1440" stroke="#413c3a" stroke-width="5"/>
+          <path d="M0 412H1440" stroke="#d6bda3" stroke-width="2"/>
+        </g>
+        <g class="train"><g transform="translate(0 365)"><use href="#carriage"/><path d="M122 32H134" stroke="#292c34" stroke-width="4"/><use href="#carriage" x="134"/><path d="M256 32H268" stroke="#292c34" stroke-width="4"/><use href="#carriage" x="268"/><path d="M378 0Q414 5 418 32L415 39H380Z" fill="url(#car)"/><path d="M385 6Q403 9 408 22H385Z" fill="#ffe2a3"/><path d="M419 28L520 12V50Z" fill="#ffe5b5" opacity=".1"/></g></g>
+        <g class="foreground-clouds"><use href="#cloudBank" transform="translate(120 540) scale(1.6 .9)"/><use href="#cloudBank" transform="translate(810 560) scale(1.7 .85)"/></g>
+      </svg>
+      <span class="scene-caption">01 / From Baraut to everywhere</span>
     </div>
-
-    <div class="scroll-cue reveal-el r5">
-      <span class="cue-line" aria-hidden="true"></span>
-      <span>Scroll</span>
+    <div class="journey-console wrap">
+      <div class="service-picker">
+        <label for="serviceRoute">Where should we take your brand?</label>
+        <div class="route-controls"><select id="serviceRoute"><option value="content">Content &amp; Social</option><option value="campaign">Brand Campaigns</option><option value="web">Web &amp; Digital Experiences</option><option value="ai">AI-Assisted Creative</option></select><a id="routeLink" href="mailto:hello@pluto.agency?subject=Content%20%26%20Social%20project" aria-label="Discuss Content and Social">Let's talk ↗</a></div>
+        <p id="routeDescription" aria-live="polite">Build a consistent presence that compounds.</p>
+      </div>
+      <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false">Pause scenery</button>
     </div>
   </section>
 
@@ -608,9 +666,46 @@
     });
 
     var hero = document.getElementById('home');
+
+    var motionToggle = document.getElementById('motionToggle');
+    var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    var sceneVisible = true;
+    function updateScenery() {
+      hero.classList.toggle('scenery-paused', motionToggle.getAttribute('aria-pressed') === 'true' || document.hidden || !sceneVisible || reduceMotion.matches);
+    }
+    motionToggle.addEventListener('click', function () {
+      var paused = motionToggle.getAttribute('aria-pressed') !== 'true';
+      motionToggle.setAttribute('aria-pressed', String(paused));
+      motionToggle.textContent = paused ? 'Resume scenery' : 'Pause scenery';
+      updateScenery();
+    });
+    document.addEventListener('visibilitychange', updateScenery);
+    reduceMotion.addEventListener('change', updateScenery);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (entries) {
+      sceneVisible = entries[0].isIntersecting; updateScenery();
+    }).observe(hero);
+    updateScenery();
+    var routes = {
+      content: ['Content & Social', 'Build a consistent presence that compounds.'],
+      campaign: ['Brand Campaigns', 'Make your next launch a moment worth noticing.'],
+      web: ['Web & Digital Experiences', 'Turn attention into an experience people use.'],
+      ai: ['AI-Assisted Creative', 'Move faster without taking a shortcut on ideas.']
+    };
+    document.getElementById('serviceRoute').addEventListener('change', function (event) {
+      var route = routes[event.target.value];
+      document.getElementById('routeDescription').textContent = route[1];
+      var link = document.getElementById('routeLink');
+      link.href = 'mailto:hello@pluto.agency?subject=' + encodeURIComponent(route[0] + ' project');
+      link.setAttribute('aria-label', 'Discuss ' + route[0]);
+    });
+
     var replayBtn = document.getElementById('replayBtn');
     replayBtn.addEventListener('click', function(){
       hero.classList.remove('play');
+      var train = hero.querySelector('.train');
+      train.style.animation = 'none';
+      void train.getBoundingClientRect();
+      train.style.animation = ''; 
       requestAnimationFrame(function(){
         requestAnimationFrame(function(){
           hero.classList.add('play');
@@ -635,3 +730,4 @@
 
 </body>
 </html>
+
