@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLUTO — Digital Media Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Apply the saved preference before paint; storage may be disabled.
+  (function () {
+    var theme;
+    try { theme = localStorage.getItem('pluto-theme'); } catch (e) {}
+    document.documentElement.dataset.theme = theme === 'light' || theme === 'dark'
+      ? theme : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  })();
+</script>
+<style>
+  :root{
+    --void:#120D0A;
+    --panel:#1A130E;
+    --cream:#F2E7D6;
+    --dim:#AC9E88;
+    --rust:#C2532B;
+    --rust-deep:#7C3419;
+    --rust-bright:#E48752;
+    --haze:#93B2C2;
+    --haze-deep:#4F6C7A;
+    --line: rgba(242,231,214,0.13);
+    --ease: cubic-bezier(.16,.84,.28,1);
+    --font-display: 'Fraunces', ui-serif, Georgia, serif;
+    --font-body: 'Manrope', -apple-system, "Segoe UI", sans-serif;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ background:var(--void); scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse 60% 45% at 78% 8%, rgba(194,83,43,0.10), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 15% 90%, rgba(147,178,194,0.05), transparent 60%),
+      var(--void);
+    color:var(--cream);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  a{ color:inherit; }
+  img,svg{ max-width:100%; display:block; }
+
+  .wrap{
+    max-width:1120px;
+    margin-inline:auto;
+    padding-inline:clamp(1.25rem, 5vw, 3rem);
+  }
+
+  .section, .hero{ scroll-margin-top:76px; }
+
+  /* ---------- Header / Nav ---------- */
+  .site-header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block:1rem;
+    padding-inline:clamp(1.25rem, 5vw, 3rem);
+    background:rgba(18,13,10,0.72);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand-mark{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.25rem;
+    text-decoration:none;
+    color:var(--cream);
+  }
+  .nav-toggle{
+    display:none;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--cream);
+    width:38px; height:38px;
+    border-radius:2px;
+    cursor:pointer;
+    align-items:center; justify-content:center;
+  }
+  .nav-toggle span{
+    display:block; width:16px; height:1.5px;
+    background:var(--cream); margin:2.5px auto;
+  }
+  .nav-links{
+    display:flex; align-items:center; gap:1.75rem;
+    list-style:none; margin:0; padding:0;
+  }
+  .nav-links a{
+    font-size:.92rem;
+    color:var(--dim);
+    text-decoration:none;
+    white-space:nowrap;
+    transition:color .2s var(--ease);
+  }
+  .nav-links a:hover{ color:var(--cream); }
+  .nav-cta{
+    padding:.55rem .95rem;
+    border:1px solid var(--line);
+    border-radius:2px;
+    transition:border-color .2s var(--ease), color .2s var(--ease);
+  }
+  .nav-cta:hover{ border-color:var(--rust); color:var(--rust-bright) !important; }
+
+  @media (max-width:760px){
+    .nav-toggle{ display:inline-flex; }
+    .nav-links{
+      display:none;
+      position:absolute; top:100%; left:0; right:0;
+      flex-direction:column; align-items:stretch; gap:0;
+      background:var(--panel);
+      border-bottom:1px solid var(--line);
+      padding:.25rem clamp(1.25rem,5vw,3rem) 1rem;
+    }
+    .nav-links.open{ display:flex; }
+    .nav-links a{ padding:.85rem 0; border-top:1px solid var(--line); }
+    .nav-links a:first-child{ border-top:none; }
+    .nav-cta{ margin-top:.5rem; text-align:center; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
+    padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 8vw, 5rem);
+    overflow:hidden;
+  }
+
+  .orbit-stage{
+    position:absolute;
+    top:clamp(3rem, 8vw, 5.5rem);
+    right:clamp(1.25rem, 6vw, 4rem);
+    width:150px;
+    height:150px;
+  }
+  .barycenter{
+    position:absolute; top:50%; left:50%;
+    width:3px; height:3px; margin:-1.5px 0 0 -1.5px;
+    border-radius:50%;
+    background:var(--dim);
+    opacity:.45;
+  }
+  .orbit-wrap-pluto, .orbit-wrap-charon{
+    position:absolute; top:50%; left:50%;
+    width:0; height:0;
+    animation: spin 17s linear infinite;
+  }
+  .dot-pluto{
+    position:absolute; top:0; left:0;
+    width:30px; height:30px; margin:-15px 0 0 -15px;
+    transform:translateX(22px);
+    border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, var(--rust-bright), var(--rust) 55%, var(--rust-deep) 100%);
+    box-shadow:0 0 22px 2px rgba(194,83,43,.35);
+  }
+  .dot-charon{
+    position:absolute; top:0; left:0;
+    width:13px; height:13px; margin:-6.5px 0 0 -6.5px;
+    transform:translateX(-58px);
+    border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, #D6E6EC, var(--haze) 60%, var(--haze-deep) 100%);
+    box-shadow:0 0 12px 1px rgba(147,178,194,.3);
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .reveal-el{ opacity:0; transform:translateY(16px); }
+  .hero.play .reveal-el{ animation: fadeUp .9s var(--ease) both; }
+  .hero.play .r1{ animation-delay:.05s; }
+  .hero.play .r2{ animation-delay:.28s; }
+  .hero.play .r3{ animation-delay:.48s; }
+  .hero.play .r4{ animation-delay:.7s; }
+  .hero.play .r5{ animation-delay:.95s; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:translateY(0);} }
+
+  .kicker{ font-size:.9rem; color:var(--dim); margin:0 0 1.1rem; }
+  .wordmark{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(3.6rem, 13vw, 8.5rem);
+    line-height:.88;
+    letter-spacing:-0.02em;
+    margin:0;
+    color:var(--cream);
+  }
+  .tagline{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(1.25rem, 2.6vw, 1.7rem);
+    line-height:1.35;
+    max-width:20ch;
+    margin:1.4rem 0 0;
+  }
+  .lede{
+    font-size:1rem;
+    line-height:1.6;
+    color:var(--dim);
+    max-width:46ch;
+    margin:1.25rem 0 0;
+  }
+
+  .scroll-cue{
+    position:absolute;
+    left:clamp(1.25rem, 5vw, 3rem);
+    bottom:1.75rem;
+    display:flex; align-items:center; gap:.6rem;
+    font-size:.78rem; color:var(--dim);
+  }
+  .cue-line{
+    width:1px; height:26px;
+    background:linear-gradient(var(--dim), transparent);
+    animation:cueGrow 2.2s ease-in-out infinite;
+  }
+  @keyframes cueGrow{ 0%,100%{ opacity:.25; } 50%{ opacity:.8; } }
+
+  /* ---------- Sections ---------- */
+  .section{
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+    border-top:1px solid var(--line);
+  }
+
+  .thesis-lead{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(1.6rem, 4vw, 2.5rem);
+    line-height:1.3;
+    max-width:18ch;
+    margin:0;
+  }
+  .thesis-sub{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--dim);
+    max-width:58ch;
+    margin:1.5rem 0 0;
+  }
+
+  .section-heading{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(1.4rem, 2.6vw, 1.9rem);
+    margin:0 0 2.25rem;
+  }
+
+  .services-list{ display:flex; flex-direction:column; }
+  .service-row{
+    display:grid;
+    grid-template-columns:minmax(150px,240px) 1fr;
+    gap:1rem 2rem;
+    padding-block:1.4rem;
+    border-top:1px solid var(--line);
+  }
+  .service-row:first-child{ border-top:none; }
+  .service-term{ font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem; }
+  .service-desc{ font-size:.98rem; line-height:1.6; color:var(--dim); max-width:52ch; }
+
+  .approach-list{ display:flex; flex-direction:column; }
+  .approach-row{
+    display:grid;
+    grid-template-columns:2.75rem minmax(140px,220px) 1fr;
+    gap:1rem 1.5rem;
+    padding-block:1.4rem;
+    border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .approach-row:first-child{ border-top:none; }
+  .approach-num{ font-family:var(--font-display); font-style:italic; font-weight:500; color:var(--dim); font-size:1rem; }
+  .approach-term{ font-family:var(--font-display); font-style:italic; font-weight:500; font-size:1.05rem; margin-bottom:.35rem; }
+  .approach-desc{ font-size:.98rem; line-height:1.6; color:var(--dim); max-width:52ch; }
+
+  .founder-grid{
+    display:grid;
+    grid-template-columns:minmax(120px,200px) 1fr;
+    gap:1.25rem 2rem;
+  }
+  .founder-label{ font-size:.95rem; color:var(--dim); }
+  .founder-name{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(1.6rem, 3.2vw, 2.2rem);
+    margin:0 0 .9rem;
+  }
+  .founder-bio{ font-size:1rem; line-height:1.65; color:var(--dim); max-width:52ch; margin:0; }
+
+  .closing{ text-align:left; }
+  .closing-mark{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(2rem, 5vw, 3rem);
+    margin:0;
+  }
+  .closing-line{
+    font-family:var(--font-display);
+    font-style:italic;
+    font-weight:400;
+    font-size:clamp(1.15rem, 2.4vw, 1.4rem);
+    color:var(--dim);
+    margin:.9rem 0 .6rem;
+  }
+  .closing-sub{ font-size:1rem; color:var(--dim); max-width:46ch; margin:0 0 1.5rem; }
+  .closing-contact{
+    display:inline-block;
+    font-size:1rem;
+    padding:.7rem 1.1rem;
+    border:1px solid var(--line);
+    border-radius:2px;
+    text-decoration:none;
+    transition:border-color .2s var(--ease), color .2s var(--ease);
+  }
+  .closing-contact:hover{ border-color:var(--rust); color:var(--rust-bright); }
+
+  .site-footer{
+    display:flex; flex-wrap:wrap; gap:1rem;
+    align-items:center; justify-content:space-between;
+    padding-block:1.75rem;
+    border-top:1px solid var(--line);
+    font-size:.82rem;
+    color:var(--dim);
+  }
+  .replay-btn{
+    background:none;
+    border:1px solid var(--line);
+    color:var(--dim);
+    font-family:var(--font-body);
+    font-size:.82rem;
+    padding:.5rem .9rem;
+    border-radius:2px;
+    cursor:pointer;
+    transition:border-color .2s var(--ease), color .2s var(--ease);
+  }
+  .replay-btn:hover{ border-color:var(--rust); color:var(--rust-bright); }
+  .replay-btn:focus-visible, a:focus-visible, .closing-contact:focus-visible, .nav-toggle:focus-visible{
+    outline:2px solid var(--haze);
+    outline-offset:2px;
+  }
+
+  @media (max-width:640px){
+    .orbit-stage{ width:110px; height:110px; top:2rem; right:1.25rem; }
+    .dot-pluto{ transform:translateX(16px); }
+    .dot-charon{ transform:translateX(-42px); }
+    .service-row, .founder-grid{ grid-template-columns:1fr; }
+    .approach-row{ grid-template-columns:1fr; }
+    .approach-num{ margin-bottom:-.5rem; }
+    .founder-label{ margin-bottom:-.5rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .orbit-wrap-pluto, .orbit-wrap-charon, .cue-line{ animation:none !important; }
+    .reveal-el{ animation:none !important; opacity:1 !important; transform:none !important; }
+  }
+
+  /* ---------- Landscape theme switch ---------- */
+  :root{ color-scheme:dark; --header-bg:rgba(12,19,37,.82); }
+  :root[data-theme="dark"]{
+    --void:#0c1325; --panel:#141e33; --cream:#f2e7d6;
+    --dim:#acb5c7; --line:rgba(220,231,255,.15);
+  }
+  :root[data-theme="light"]{
+    color-scheme:light;
+    --void:#f8f1e5; --panel:#eee4d3; --cream:#30261f;
+    --dim:#6c5d4d; --rust:#a64122; --rust-bright:#a64122;
+    --line:rgba(62,44,28,.18); --header-bg:rgba(248,241,229,.84);
+  }
+  body,.site-header{ transition:background-color .55s ease,color .55s ease,border-color .55s ease; }
+  .site-header{ background:var(--header-bg); gap:1.25rem; }
+  .brand-mark{ margin-right:auto; }
+  .theme-toggle{
+    --switch-width:116px;
+    position:relative; isolation:isolate; flex:none; order:2;
+    width:var(--switch-width); height:52px; padding:4px;
+    border:1px solid #b3a48c; border-radius:999px;
+    background:linear-gradient(160deg,#f5ead5,#c8bba3);
+    box-shadow:0 3px 8px #0003,inset 0 1px 1px #fff9;
+    cursor:pointer; -webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle:focus-visible{ outline:3px solid var(--rust-bright); outline-offset:5px; }
+  .theme-scene{ position:absolute; inset:4px; border-radius:999px; overflow:hidden;
+    background:#91cde5; box-shadow:inset 0 2px 5px #142a4655; transition:background .65s ease; }
+  .theme-scene svg{ width:100%; height:100%; max-width:none; }
+  .scene-hill{ fill:#78a653; transition:fill .65s ease; }
+  .scene-grass{ fill:#467e46; transition:fill .65s ease; }
+  .scene-tree{ fill:#326c48; transition:fill .65s ease; }
+  .scene-house{ fill:#f3d1a0; transition:fill .65s ease; }
+  .scene-window{ fill:#8dbaab; transition:fill .65s ease,filter .65s ease; }
+  .scene-sun,.scene-clouds,.scene-moon,.scene-stars{ transition:opacity .5s ease,transform .7s ease; transform-box:fill-box; transform-origin:center; }
+  .scene-moon,.scene-stars{ opacity:0; transform:translateY(-7px); }
+  .theme-glass{
+    position:absolute; z-index:2; top:5px; left:5px; width:40px; height:40px;
+    border-radius:50%; border:1px solid #ffffffe0;
+    background:radial-gradient(ellipse at 28% 17%,#ffffffd9,transparent 43%),linear-gradient(145deg,#ffffff70,#e1edff12 48%,#9aacc54d);
+    box-shadow:0 3px 5px #07132566,inset 0 2px 3px #fff,inset 0 -3px 5px #56708c70;
+    backdrop-filter:blur(1px); -webkit-backdrop-filter:blur(1px);
+    transition:transform .75s cubic-bezier(.22,1.35,.35,1),background .5s ease;
+  }
+  .theme-glass::before{ content:""; position:absolute; inset:4px 7px 22px; border-top:2px solid #fffd; border-radius:50%; transform:rotate(-28deg); }
+  .theme-glass::after{ content:""; position:absolute; right:5px; top:15px; width:3px; height:12px; border-radius:50%; background:#fff8; transform:rotate(26deg); }
+  [data-theme="dark"] .theme-toggle{ border-color:#52627c; background:linear-gradient(150deg,#77869e,#29354d); }
+  [data-theme="dark"] .theme-scene{ background:#152647; }
+  [data-theme="dark"] .theme-glass{ transform:translateX(64px); }
+  [data-theme="dark"] .scene-sun,[data-theme="dark"] .scene-clouds{ opacity:0; transform:translateY(9px); }
+  [data-theme="dark"] .scene-moon,[data-theme="dark"] .scene-stars{ opacity:1; transform:translateY(0); }
+  [data-theme="dark"] .scene-hill{ fill:#314762; }
+  [data-theme="dark"] .scene-grass{ fill:#1c3548; }
+  [data-theme="dark"] .scene-tree{ fill:#142d36; }
+  [data-theme="dark"] .scene-house{ fill:#8792a0; }
+  [data-theme="dark"] .scene-window{ fill:#ffd77b; filter:drop-shadow(0 0 2px #ffbe56); }
+  [data-theme="dark"] .scene-stars path{ animation:starTwinkle 3s ease-in-out infinite alternate; }
+  [data-theme="dark"] .scene-stars path:nth-child(2n){ animation-delay:-1.5s; }
+  @keyframes starTwinkle{ from{opacity:.35} to{opacity:1} }
+  @media(max-width:960px) and (min-width:761px){ .nav-links{gap:.9rem} .site-header{gap:.85rem;padding-inline:1.25rem} }
+  @media(max-width:760px){ .theme-toggle{order:0} .nav-toggle{order:1} }
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{ transition:none !important; }
+    .scene-stars path{ animation:none !important; }
+  }
+
+
+  /* PLUTO miniature journey — no runtime or image dependencies. */
+  .hero{min-height:0;padding:4.5rem 0 2rem;isolation:isolate;display:block}
+  .hero-copy{position:relative;z-index:2;text-align:center;max-width:1000px}
+  .hero .kicker{text-transform:uppercase;letter-spacing:.2em;font-size:.67rem;margin-bottom:1.5rem}
+  .journey-title{font-family:var(--font-display);font-weight:400;font-size:clamp(2.4rem,5.3vw,4.7rem);line-height:1.08;letter-spacing:-.045em;margin:0 auto;max-width:20ch;text-wrap:balance}
+  .journey-title em{font-weight:400;color:var(--rust-bright)}
+  .hero .lede{margin:1.4rem auto;max-width:53ch;font-size:.9rem}
+  .hero-cta{display:inline-flex;align-items:center;gap:2.5rem;padding:.85rem 1.25rem;background:var(--cream);color:var(--void);text-decoration:none;font-size:.8rem;border-radius:3px}
+  .rail-world{position:relative;height:clamp(300px,40vw,540px);margin-top:-2rem;overflow:hidden;z-index:-1;mask-image:linear-gradient(transparent,#000 16%,#000 87%,transparent)}
+  .rail-world>svg{width:100%;height:100%;max-width:none}
+  .scene-caption{position:absolute;left:5%;bottom:18%;color:#f2e7d6;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase}
+  .train{animation:railJourney 28s linear infinite;will-change:transform}
+  @keyframes railJourney{from{transform:translateX(-460px)}to{transform:translateX(1500px)}}
+  .distant-clouds{animation:cloudDrift 28s ease-in-out infinite alternate}
+  .cloud-layer{animation:cloudDrift 20s ease-in-out infinite alternate-reverse}
+  .foreground-clouds{animation:cloudDrift 16s ease-in-out infinite alternate}
+  @keyframes cloudDrift{to{transform:translateX(24px)}}
+  .journey-console{display:flex;justify-content:space-between;align-items:center;gap:2rem;position:relative;margin-top:-1.5rem;z-index:3}
+  .service-picker{width:min(100%,480px);padding:1.2rem 1.5rem;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 15px 40px #0001}
+  .service-picker label{display:block;font-size:.68rem;letter-spacing:.04em;color:var(--dim);margin-bottom:.8rem}
+  .route-controls{display:flex;gap:1rem;align-items:center}
+  .route-controls select{min-width:0;flex:1;color:var(--cream);background:var(--panel);font:500 .85rem var(--font-body);border:0;border-bottom:1px solid var(--line);padding:.5rem 0;cursor:pointer}
+  .route-controls a{font-size:.75rem;white-space:nowrap;text-underline-offset:5px}
+  .service-picker p{font-size:.72rem;color:var(--dim);line-height:1.5;margin:.8rem 0 0}
+  .motion-toggle{color:var(--dim);font:inherit;font-size:.7rem;border:1px solid var(--line);background:var(--panel);padding:.7rem 1rem;border-radius:30px;cursor:pointer}
+  button:focus-visible,select:focus-visible{outline:2px solid var(--rust-bright);outline-offset:4px}
+  .hero.scenery-paused .rail-world *{animation-play-state:paused!important}
+  [data-theme="light"] .rail-world{opacity:.9}
+  @media(max-width:640px){.hero{padding-top:3rem}.hero .kicker{font-size:.57rem}.rail-world{margin-top:0;height:320px}.journey-console{align-items:flex-start;flex-direction:column;gap:1rem}.service-picker{padding:1rem;width:100%}.scene-caption{bottom:20%;font-size:.5rem}.motion-toggle{align-self:flex-end}.journey-title{max-width:19ch}}
+  @media(prefers-reduced-motion:reduce){.rail-world *{animation:none!important}.train{transform:translateX(510px)}.motion-toggle{display:none}}
+
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <a class="brand-mark" href="#home">PLUTO</a>
+
+    <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-label="Dark theme" aria-checked="false" title="Toggle day and night theme">
+      <span class="theme-scene" aria-hidden="true">
+        <svg viewBox="0 0 108 42" fill="none" shape-rendering="crispEdges">
+          <g class="scene-sun" fill="#ffedaa"><path d="M79 6h8v3h3v8h-3v3h-8v-3h-3V9h3z"/></g>
+          <g class="scene-clouds" fill="#fff5df"><path d="M16 9h7V6h10v3h6v5H16zM54 18h5v-3h9v3h7v4H54z"/></g>
+          <g class="scene-moon" fill="#edf1cf"><path d="M22 5h9v3h-6v7h7v-3h3v7h-4v3h-9v-3h-4V9h4z"/></g>
+          <g class="scene-stars" fill="#e4ecff">
+            <path d="M47 4h2v2h-2zM67 9h2v2h-2z"/><path d="M9 19h2v2H9zM40 17h2v2h-2z"/>
+            <path d="M84 5h2v2h-2zM95 19h2v2h-2zM57 14h2v2h-2z"/>
+          </g>
+          <path class="scene-hill" d="M0 30h9v-4h14v-3h13v3h17v4h16v-5h18v-3h13v4h8v16H0z"/>
+          <path class="scene-grass" d="M0 35h17v-3h18v3h30v-3h20v2h23v8H0z"/>
+          <g fill="#72513b"><path d="M16 24h3v14h-3zM88 22h3v15h-3z"/></g>
+          <g class="scene-tree"><path d="M15 15h5v4h3v5h3v5H9v-5h3v-5h3zM87 13h5v4h3v5h3v6H81v-6h3v-5h3z"/></g>
+          <path class="scene-house" d="M43 24h24v15H43z"/>
+          <path fill="#a65d46" d="M40 23h4v-4h4v-4h13v4h4v4h5v3H40z"/>
+          <path fill="#704c44" d="M61 12h4v9h-4zM53 30h5v9h-5z"/>
+          <path class="scene-window" d="M46 28h4v5h-4zM61 28h4v5h-4z"/>
+          <path fill="#b6ba8a" d="M54 39h4v3h-4z"/>
+          <path fill="#a1bf69" d="M29 36h2v2h-2zM75 38h3v1h-3zM7 33h2v2H7z"/>
+        </svg>
+      </span>
+      <span class="theme-glass" aria-hidden="true"></span>
+    </button>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#services">Services</a>
+      <a href="#approach">Approach</a>
+      <a href="#founder">Founder</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-cta" href="#contact">Start a project</a>
+    </nav>
+  </header>
+
+  <section class="hero play" id="home">
+    <div class="hero-copy wrap">
+      <p class="kicker">PLUTO / Independent digital media agency</p>
+      <h1 class="journey-title">A digital media agency built in Baraut, aimed at <em>everywhere else.</em></h1>
+      <p class="lede">Sharp creative, consistent presence, and campaigns built to be noticed. Small town roots. A much wider orbit.</p>
+      <a class="hero-cta" href="#contact">Start a project <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="rail-world" aria-hidden="true">
+      <svg viewBox="0 0 1440 650" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#233346"/><stop offset=".65" stop-color="#8c7168"/><stop offset="1" stop-color="#c49370"/></linearGradient>
+          <radialGradient id="sun"><stop stop-color="#ffdfab" stop-opacity=".7"/><stop offset="1" stop-color="#ffca91" stop-opacity="0"/></radialGradient>
+          <linearGradient id="cloud" x2=".3" y2="1"><stop stop-color="#ead8c5"/><stop offset=".4" stop-color="#bea99f"/><stop offset="1" stop-color="#6b7481"/></linearGradient>
+          <linearGradient id="bridge" x2="0" y2="1"><stop stop-color="#ac8b77"/><stop offset="1" stop-color="#3c3b43"/></linearGradient>
+          <linearGradient id="car" x2="0" y2="1"><stop stop-color="#e9a06d"/><stop offset=".15" stop-color="#bf603d"/><stop offset="1" stop-color="#6f3028"/></linearGradient>
+          <linearGradient id="roof" x2="0" y2="1"><stop stop-color="#f1d2a9"/><stop offset="1" stop-color="#a28d7d"/></linearGradient>
+          <g id="cloudBank"><path d="M-180 130C-170 88-115 78-80 94C-100 25-20 0 22 38C43-28 140-19 163 45C211 3 274 37 272 89C321 58 375 88 370 128C414 110 451 142 440 169H-180Z" fill="url(#cloud)"/><path d="M-80 94C-63 63-21 60 8 77M163 45C172 72 167 90 151 105M272 89C247 79 220 92 208 110" fill="none" stroke="#f7e5d2" stroke-opacity=".22" stroke-width="5"/></g>
+          <g id="carriage"><path d="M0 0L10-9H111L122 0Z" fill="url(#roof)"/><rect width="122" height="39" rx="5" fill="url(#car)"/><path d="M0 27H122" stroke="#efbe85" stroke-width="2"/><g fill="#ffe2a3"><rect x="13" y="8" width="13" height="14" rx="2"/><rect x="34" y="8" width="13" height="14" rx="2"/><rect x="55" y="8" width="13" height="14" rx="2"/><rect x="76" y="8" width="13" height="14" rx="2"/><rect x="97" y="8" width="13" height="14" rx="2"/></g><path d="M9 39H114" stroke="#292c34" stroke-width="6"/><g fill="#252832" stroke="#998a7d" stroke-width="2"><circle cx="23" cy="42" r="6"/><circle cx="101" cy="42" r="6"/></g></g>
+        </defs>
+        <rect width="1440" height="650" fill="url(#sky)"/>
+        <circle cx="1090" cy="200" r="270" fill="url(#sun)"/>
+        <circle cx="1090" cy="201" r="39" fill="#efd6b0" opacity=".65"/>
+        <g class="distant-clouds" opacity=".55"><use href="#cloudBank" transform="translate(170 240) scale(1.1 .8)"/><use href="#cloudBank" transform="translate(900 240) scale(1.3 .7)"/></g>
+        <path d="M0 490L130 407L250 450L420 335L570 470L720 390L860 465L1030 360L1200 448L1350 358L1440 431V650H0Z" fill="#434d5b" opacity=".6"/>
+        <path d="M0 530L190 462L350 512L530 425L740 522L950 455L1120 510L1340 430L1440 470V650H0Z" fill="#354351"/>
+        <g class="cloud-layer"><use href="#cloudBank" transform="translate(20 390) scale(1.2 .9)"/><use href="#cloudBank" transform="translate(980 395) scale(1.4 1)"/></g>
+        <g class="viaduct">
+          <path d="M-100 426H1540V650H-100Z M50 650V535A66 66 0 0 1 182 535V650Z M258 650V535A66 66 0 0 1 390 535V650Z M466 650V535A66 66 0 0 1 598 535V650Z M674 650V535A66 66 0 0 1 806 535V650Z M882 650V535A66 66 0 0 1 1014 535V650Z M1090 650V535A66 66 0 0 1 1222 535V650Z M1298 650V535A66 66 0 0 1 1430 535V650Z" fill="url(#bridge)" fill-rule="evenodd"/>
+          <path d="M-100 426H1540" stroke="#dbb48a" stroke-width="8"/><path d="M-100 440H1540" stroke="#2b3039" stroke-width="8"/><path d="M0 417H1440" stroke="#413c3a" stroke-width="5"/>
+          <path d="M0 412H1440" stroke="#d6bda3" stroke-width="2"/>
+        </g>
+        <g class="train"><g transform="translate(0 365)"><use href="#carriage"/><path d="M122 32H134" stroke="#292c34" stroke-width="4"/><use href="#carriage" x="134"/><path d="M256 32H268" stroke="#292c34" stroke-width="4"/><use href="#carriage" x="268"/><path d="M378 0Q414 5 418 32L415 39H380Z" fill="url(#car)"/><path d="M385 6Q403 9 408 22H385Z" fill="#ffe2a3"/><path d="M419 28L520 12V50Z" fill="#ffe5b5" opacity=".1"/></g></g>
+        <g class="foreground-clouds"><use href="#cloudBank" transform="translate(120 540) scale(1.6 .9)"/><use href="#cloudBank" transform="translate(810 560) scale(1.7 .85)"/></g>
+      </svg>
+      <span class="scene-caption">01 / From Baraut to everywhere</span>
+    </div>
+    <div class="journey-console wrap">
+      <div class="service-picker">
+        <label for="serviceRoute">Where should we take your brand?</label>
+        <div class="route-controls"><select id="serviceRoute"><option value="content">Content &amp; Social</option><option value="campaign">Brand Campaigns</option><option value="web">Web &amp; Digital Experiences</option><option value="ai">AI-Assisted Creative</option></select><a id="routeLink" href="mailto:hello@pluto.agency?subject=Content%20%26%20Social%20project" aria-label="Discuss Content and Social">Let's talk ↗</a></div>
+        <p id="routeDescription" aria-live="polite">Build a consistent presence that compounds.</p>
+      </div>
+      <button class="motion-toggle" id="motionToggle" type="button" aria-pressed="false">Pause scenery</button>
+    </div>
+  </section>
+
+  <section class="section" id="about">
+    <div class="wrap">
+      <p class="thesis-lead">Being small was never the problem. Being forgettable is.</p>
+      <p class="thesis-sub">PLUTO helps brands earn attention on merit, not headcount. Sharp creative, consistent presence, and campaigns built to be noticed by people, not just the algorithm.</p>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="wrap">
+      <h2 class="section-heading">What we do</h2>
+      <div class="services-list">
+        <div class="service-row">
+          <div class="service-term">Content &amp; Social</div>
+          <div class="service-desc">Ongoing content systems and social strategy that compound instead of just filling a calendar.</div>
+        </div>
+        <div class="service-row">
+          <div class="service-term">Brand Campaigns</div>
+          <div class="service-desc">Concepts and creative for launches, drops, and moments that need to land.</div>
+        </div>
+        <div class="service-row">
+          <div class="service-term">Web &amp; Digital Experiences</div>
+          <div class="service-desc">Sites and interactive experiences built to be used, not just viewed.</div>
+        </div>
+        <div class="service-row">
+          <div class="service-term">AI-Assisted Creative</div>
+          <div class="service-desc">Generative tools folded into the workflow to move faster, never as a shortcut for ideas.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="approach">
+    <div class="wrap">
+      <h2 class="section-heading">How we work</h2>
+      <div class="approach-list">
+        <div class="approach-row">
+          <span class="approach-num">01</span>
+          <div>
+            <div class="approach-term">Discover</div>
+            <div class="approach-desc">Understand the brand, the audience, and what's actually being asked for.</div>
+          </div>
+        </div>
+        <div class="approach-row">
+          <span class="approach-num">02</span>
+          <div>
+            <div class="approach-term">Strategize</div>
+            <div class="approach-desc">A plan built around the specific goal, not a generic playbook.</div>
+          </div>
+        </div>
+        <div class="approach-row">
+          <span class="approach-num">03</span>
+          <div>
+            <div class="approach-term">Create</div>
+            <div class="approach-desc">Content, campaigns, and experiences designed to hold attention.</div>
+          </div>
+        </div>
+        <div class="approach-row">
+          <span class="approach-num">04</span>
+          <div>
+            <div class="approach-term">Grow</div>
+            <div class="approach-desc">Track what's working, cut what isn't, and keep compounding.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="founder">
+    <div class="wrap founder-grid">
+      <div class="founder-label">Founder</div>
+      <div>
+        <h2 class="founder-name">Aryan Maan</h2>
+        <p class="founder-bio">Self-taught in web development and generative AI. Building PLUTO from Baraut, Uttar Pradesh. One project, one client, one orbit at a time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section closing" id="contact">
+    <div class="wrap">
+      <p class="closing-mark">PLUTO</p>
+      <p class="closing-line">Let's talk.</p>
+      <p class="closing-sub">Based in Baraut, Uttar Pradesh. Working with brands anywhere.</p>
+      <a class="closing-contact" href="mailto:hello@pluto.agency">hello@pluto.agency</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center; justify-content:space-between; width:100%;">
+      <span>© 2026 PLUTO, Baraut, Uttar Pradesh</span>
+      <button class="replay-btn" id="replayBtn" type="button">Replay intro</button>
+    </div>
+  </footer>
+
+<script>
+  (function(){
+    var themeToggle = document.getElementById('themeToggle');
+    var systemTheme = matchMedia('(prefers-color-scheme: dark)');
+    var explicitTheme = false;
+    try { explicitTheme = /^(light|dark)$/.test(localStorage.getItem('pluto-theme')); } catch (e) {}
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      themeToggle.setAttribute('aria-checked', String(theme === 'dark'));
+    }
+    applyTheme(document.documentElement.dataset.theme);
+    themeToggle.addEventListener('click', function () {
+      var theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      explicitTheme = true;
+      applyTheme(theme);
+      try { localStorage.setItem('pluto-theme', theme); } catch (e) {}
+    });
+    systemTheme.addEventListener('change', function (event) {
+      if (!explicitTheme) applyTheme(event.matches ? 'dark' : 'light');
+    });
+    window.addEventListener('storage', function (event) {
+      if (event.key !== 'pluto-theme' && event.key !== null) return;
+      explicitTheme = event.newValue === 'light' || event.newValue === 'dark';
+      applyTheme(explicitTheme ? event.newValue : (systemTheme.matches ? 'dark' : 'light'));
+    });
+
+    var hero = document.getElementById('home');
+
+    var motionToggle = document.getElementById('motionToggle');
+    var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    var sceneVisible = true;
+    function updateScenery() {
+      hero.classList.toggle('scenery-paused', motionToggle.getAttribute('aria-pressed') === 'true' || document.hidden || !sceneVisible || reduceMotion.matches);
+    }
+    motionToggle.addEventListener('click', function () {
+      var paused = motionToggle.getAttribute('aria-pressed') !== 'true';
+      motionToggle.setAttribute('aria-pressed', String(paused));
+      motionToggle.textContent = paused ? 'Resume scenery' : 'Pause scenery';
+      updateScenery();
+    });
+    document.addEventListener('visibilitychange', updateScenery);
+    reduceMotion.addEventListener('change', updateScenery);
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (entries) {
+      sceneVisible = entries[0].isIntersecting; updateScenery();
+    }).observe(hero);
+    updateScenery();
+    var routes = {
+      content: ['Content & Social', 'Build a consistent presence that compounds.'],
+      campaign: ['Brand Campaigns', 'Make your next launch a moment worth noticing.'],
+      web: ['Web & Digital Experiences', 'Turn attention into an experience people use.'],
+      ai: ['AI-Assisted Creative', 'Move faster without taking a shortcut on ideas.']
+    };
+    document.getElementById('serviceRoute').addEventListener('change', function (event) {
+      var route = routes[event.target.value];
+      document.getElementById('routeDescription').textContent = route[1];
+      var link = document.getElementById('routeLink');
+      link.href = 'mailto:hello@pluto.agency?subject=' + encodeURIComponent(route[0] + ' project');
+      link.setAttribute('aria-label', 'Discuss ' + route[0]);
+    });
+
+    var replayBtn = document.getElementById('replayBtn');
+    replayBtn.addEventListener('click', function(){
+      hero.classList.remove('play');
+      var train = hero.querySelector('.train');
+      train.style.animation = 'none';
+      void train.getBoundingClientRect();
+      train.style.animation = ''; 
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          hero.classList.add('play');
+        });
+      });
+    });
+
+    var navToggle = document.getElementById('navToggle');
+    var navLinks = document.getElementById('navLinks');
+    navToggle.addEventListener('click', function(){
+      var open = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navLinks.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  })();
+</script>
+
+</body>
+</html>
+
